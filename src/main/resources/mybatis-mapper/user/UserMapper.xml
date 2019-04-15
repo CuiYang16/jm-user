@@ -1,29 +1,59 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cn.edu.imut.jm.user.domain.user.dao.UserDao" >
-  <resultMap id="UserMap" type="cn.edu.imut.jm.user.domain.user.entity.User" >
-    <id column="user_id" property="userId" jdbcType="INTEGER" />
-    <result column="user_name" property="userName" jdbcType="VARCHAR" />
-    <result column="user_pwd" property="userPwd" jdbcType="VARCHAR" />
-    <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
-    <result column="user_email" property="userEmail" jdbcType="VARCHAR" />
-    <result column="user_sex" property="userSex" jdbcType="BIT" />
-    <result column="user_head_portrait" property="userHeadPortrait" jdbcType="VARCHAR" />
-    <result column="last_login_time" property="lastLoginTime" jdbcType="TIMESTAMP" />
-    <result column="is_delete" property="isDelete" jdbcType="BIT" />
-  </resultMap>
-  <sql id="User_Column_List" >
-    user_id, user_name, user_pwd, user_phone, user_email, user_sex, user_head_portrait, 
-    last_login_time, is_delete
-  </sql>
-  <select id="selectUserById" resultMap="UserMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="User_Column_List" />
-    from user
-    where user_id = #{userId,jdbcType=INTEGER}
-  </select>
-  
-  <select id="userLogin" resultMap="UserMap">
-  	select <include refid="User_Column_List" /> from user where user_name=#{userName,jdbcType=VARCHAR} and user_pwd=#{userPwd,jdbcType=VARCHAR}
-  </select>
-  </mapper>
+<mapper namespace="cn.edu.imut.jm.user.domain.user.dao.UserDao">
+	<resultMap id="UserMap"
+		type="cn.edu.imut.jm.user.domain.user.entity.User">
+		<id column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="user_name" property="userName"
+			jdbcType="VARCHAR" />
+		<result column="user_pwd" property="userPwd" jdbcType="VARCHAR" />
+		<result column="user_phone" property="userPhone"
+			jdbcType="VARCHAR" />
+		<result column="user_email" property="userEmail"
+			jdbcType="VARCHAR" />
+		<result column="user_sex" property="userSex" jdbcType="BIT" />
+		<result column="user_head_portrait" property="userHeadPortrait"
+			jdbcType="VARCHAR" />
+		<result column="last_login_time" property="lastLoginTime"
+			jdbcType="TIMESTAMP" />
+		<result column="is_delete" property="isDelete" jdbcType="BIT" />
+	</resultMap>
+	<sql id="User_Column_List">
+		user_id, user_name, user_pwd, user_phone, user_email, user_sex,
+		user_head_portrait,
+		last_login_time, is_delete
+	</sql>
+	<select id="selectUserById" resultMap="UserMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="User_Column_List" />
+		from user
+		where user_id = #{userId,jdbcType=INTEGER}
+	</select>
+
+	<select id="userLogin" resultMap="UserMap">
+		select
+		<include refid="User_Column_List" />
+		from user where user_name=#{userName,jdbcType=VARCHAR} and
+		user_pwd=#{userPwd,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 根据用户id查询用户角色 -->
+	
+	<select id="selectRoleByUserId" parameterType="int"
+		resultType="string">
+		select role_name from role where role_id in (SELECT role_id FROM user_role
+		where user_id=#{userId,jdbcType=INTEGER})
+	</select>
+	
+	<!-- 退出登录，更新最后一次时间 -->
+	<update id="updateUserLastTime">
+	update user
+	<set>
+		<if test="_parameter != null" >
+        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+	</set>
+	 where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+</mapper>

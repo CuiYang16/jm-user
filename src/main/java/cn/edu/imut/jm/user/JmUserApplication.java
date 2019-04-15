@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 
 @EnableFeignClients
 
-@MapperScan("cn.edu.imut.jm.fair.*.repo.dao.**")
+@MapperScan("cn.edu.imut.jm.user.*.dao.**")
 public class JmUserApplication {
 
 	public static void main(String[] args) {

@@ -7,7 +7,7 @@ server:
   port: 8081
 mybatis: 
   mapperLocations: classpath*:mybatis-mapper/*/*Mapper.xml
-  typeAliasesPackage: com.dhcc.ict.**.domain.**.entity.**
+  typeAliasesPackage: cn.edu.imut.**.domain.**.entity.**
 spring:
   application:
     #当前应用名称

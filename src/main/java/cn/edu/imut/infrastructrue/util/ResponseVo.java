@@ -1,14 +1,15 @@
-package cn.edu.imut.jm.user.domain.user.valobj;
+package cn.edu.imut.infrastructrue.util;
 
 import java.util.List;
 
-import cn.edu.imut.infrastructrue.util.AbstractResponse;
+import com.github.pagehelper.PageInfo;
 
 public class ResponseVo<E> extends AbstractResponse {
 
 	private List<E> list;
 	private Integer val;
-	private String msg;
+	private String str;
+	private PageInfo<E> pageInfo;
 
 	public List<E> getList() {
 		return list;
@@ -24,6 +25,22 @@ public class ResponseVo<E> extends AbstractResponse {
 
 	public void setVal(Integer val) {
 		this.val = val;
+	}
+
+	public String getStr() {
+		return str;
+	}
+
+	public void setStr(String str) {
+		this.str = str;
+	}
+
+	public PageInfo<E> getPageInfo() {
+		return pageInfo;
+	}
+
+	public void setPageInfo(PageInfo<E> pageInfo) {
+		this.pageInfo = pageInfo;
 	}
 
 	public ResponseVo(List<E> list, Integer val) {
@@ -42,10 +59,20 @@ public class ResponseVo<E> extends AbstractResponse {
 		this.val = val;
 	}
 
-	public ResponseVo(Integer val, String msg) {
+	public ResponseVo(String str) {
+		super();
+		this.str = str;
+	}
+
+	public ResponseVo(Integer val, String str) {
 		super();
 		this.val = val;
-		this.msg = msg;
+		this.str = str;
+	}
+
+	public ResponseVo(PageInfo<E> pageInfo) {
+		super();
+		this.pageInfo = pageInfo;
 	}
 
 	public ResponseVo() {

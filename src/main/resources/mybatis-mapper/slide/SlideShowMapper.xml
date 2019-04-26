@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.edu.imut.jm.user.domain.slide.dao.SlideShowDao" >
+  <resultMap id="SlideShowMap" type="cn.edu.imut.jm.user.domain.slide.entity.SlideShow" >
+    <id column="slide_id" property="slideId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="show_flag" property="showFlag" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="SlideShow_Column_List" >
+    slide_id, name, url, show_flag
+  </sql>
+  <select id="selectSlideShows" resultMap="SlideShowMap">
+    select 
+    <include refid="SlideShow_Column_List" />
+    from slide_show order by slide_id desc limit 8;
+  </select>
+  
+  <insert id="insertSlideShow" parameterType="cn.edu.imut.jm.user.domain.slide.entity.SlideShow" >
+    insert into slide_show
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="slideId != null" >
+        slide_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="showFlag != null" >
+        show_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="slideId != null" >
+        #{slideId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="showFlag != null" >
+        #{showFlag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  
+  <delete id="deleteSlideShow" parameterType="string" >
+    delete from slide_show
+    where name = #{name,jdbcType=VARCHAR}
+  </delete>
+  </mapper>

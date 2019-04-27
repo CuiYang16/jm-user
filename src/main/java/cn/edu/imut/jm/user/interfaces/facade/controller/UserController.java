@@ -1,12 +1,11 @@
 package cn.edu.imut.jm.user.interfaces.facade.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,20 +13,20 @@ import com.alibaba.fastjson.JSON;
 
 import cn.edu.imut.infrastructrue.util.JwtTokenUtil;
 import cn.edu.imut.infrastructrue.util.LoginResponseUtil;
+import cn.edu.imut.infrastructrue.util.ResponseVo;
+import cn.edu.imut.jm.user.domain.user.entity.Role;
 import cn.edu.imut.jm.user.domain.user.entity.User;
 import cn.edu.imut.jm.user.domain.user.service.UserService;
-import cn.edu.imut.jm.user.domain.user.valobj.ResponseVo;
 import cn.edu.imut.jm.user.domain.user.valobj.UserLoginVo;
 import cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi;
 
 @RestController
-@RequestMapping("/user")
+
 public class UserController implements UserServiceRemoteApi {
 
 	@Autowired
 	private UserService userService;
 
-	@RequestMapping(value = "/login", method = { RequestMethod.POST, RequestMethod.GET })
 	public UserLoginVo userLogin(@RequestBody String userLogin) {
 		String userName = JSON.parseObject(userLogin).getJSONObject("userLogin").getString("userName");
 		String userPwd = JSON.parseObject(userLogin).getJSONObject("userLogin").getString("userPwd");
@@ -36,26 +35,49 @@ public class UserController implements UserServiceRemoteApi {
 		if (loginUser != null) {
 			String token = JwtTokenUtil.generateToken(userName, loginUser.getUserId());
 			if (token != null) {
-				return LoginResponseUtil.getResponse(token);
+				UserLoginVo userLoginVo = LoginResponseUtil.getResponse(token);
+				userLoginVo.setAvatar(loginUser.getUserHeadPortrait());
+				if (userLoginVo.getCode() == 20000) {
+					userService.updateUserLastTime(loginUser.getUserId(), new Date());
+				}
+				return userLoginVo;
 			}
 		}
 		return new UserLoginVo(50001, "登录失败", null);
 	}
 
 	@Override
-	@RequestMapping(value = "/get-info", method = { RequestMethod.POST, RequestMethod.GET })
+
 	public ResponseVo<String> selectRoleByUserId(@RequestParam("token") String token) {
+		if (!JwtTokenUtil.parseToken(token)) {
+			return new ResponseVo<>(0);
+		}
 		Integer userId = JwtTokenUtil.getUserId(token);
-		List<String> selectRoleByUserId = userService.selectRoleByUserId(userId);
-		return new ResponseVo<String>(selectRoleByUserId);
+		User user = userService.selectUserById(userId);
+		List<Role> selectRoleByUserId = userService.selectRoleByUserId(userId);
+		List<String> roles = new ArrayList<String>();
+		for (Role role : selectRoleByUserId) {
+
+			roles.add(role.getRoleName());
+		}
+
+		return new ResponseVo<String>(roles, user.getUserHeadPortrait(), user.getUserName());
 	}
 
 	@Override
-	@RequestMapping(value = "/logout", method = { RequestMethod.POST, RequestMethod.GET })
-	public ResponseVo updateUserLastTime(@RequestBody String token) {
+	public ResponseVo<User> selectUsers(@RequestParam("pageNum") Integer pageNum,
+			@RequestParam("pageSize") Integer pageSize) {
 
-		Integer userId = JwtTokenUtil.getUserId(JSON.parseObject(token).getString("token"));
-		System.out.println(userId);
-		return new ResponseVo<>(userService.updateUserLastTime(userId, new Date()));
+		return new ResponseVo<>(userService.selectUsers(pageNum, pageSize));
+	}
+
+	@Override
+	public ResponseVo<Role> selectRole(@RequestParam("token") String token) {
+		if (!JwtTokenUtil.parseToken(token)) {
+			return new ResponseVo<>(0);
+		}
+		Integer userId = JwtTokenUtil.getUserId(token);
+		List<Role> selectRoleByUserId = userService.selectRoleByUserId(userId);
+		return new ResponseVo<>(selectRoleByUserId);
 	}
 }

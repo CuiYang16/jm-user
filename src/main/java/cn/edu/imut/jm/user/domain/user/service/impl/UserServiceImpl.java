@@ -6,7 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
 import cn.edu.imut.jm.user.domain.user.dao.UserDao;
+import cn.edu.imut.jm.user.domain.user.entity.Role;
 import cn.edu.imut.jm.user.domain.user.entity.User;
 import cn.edu.imut.jm.user.domain.user.service.UserService;
 
@@ -33,7 +37,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<String> selectRoleByUserId(Integer userId) {
+	public List<Role> selectRoleByUserId(Integer userId) {
 		if (userId != null && userId != 0) {
 			return userDao.selectRoleByUserId(userId);
 		}
@@ -46,6 +50,17 @@ public class UserServiceImpl implements UserService {
 			return userDao.updateUserLastTime(userId, lastLoginTime);
 		}
 		return null;
+	}
+
+	@Override
+	public PageInfo<User> selectUsers(Integer pageNum, Integer pageSize) {
+
+		PageHelper.startPage(pageNum, pageSize);
+		List<User> selectUsers = userDao.selectUsers();
+		PageInfo<User> pageInfo = new PageInfo<User>(selectUsers);
+		pageInfo.setPageNum(pageNum);
+		pageInfo.setPageSize(pageSize);
+		return pageInfo;
 	}
 
 }

@@ -19,10 +19,11 @@
 		<result column="is_delete" property="isDelete" jdbcType="BIT" />
 	</resultMap>
 	<sql id="User_Column_List">
-		user_id, user_name, user_pwd, user_phone, user_email, user_sex,
+		user_id, user_name,user_phone, user_email, user_sex,
 		user_head_portrait,
 		last_login_time, is_delete
 	</sql>
+	<!--根据id查询用户 -->
 	<select id="selectUserById" resultMap="UserMap"
 		parameterType="java.lang.Integer">
 		select
@@ -31,6 +32,7 @@
 		where user_id = #{userId,jdbcType=INTEGER}
 	</select>
 
+	<!--登录 -->
 	<select id="userLogin" resultMap="UserMap">
 		select
 		<include refid="User_Column_List" />
@@ -38,22 +40,38 @@
 		user_pwd=#{userPwd,jdbcType=VARCHAR}
 	</select>
 
-	<!-- 根据用户id查询用户角色 -->
-	
-	<select id="selectRoleByUserId" parameterType="int"
-		resultType="string">
-		select role_name from role where role_id in (SELECT role_id FROM user_role
-		where user_id=#{userId,jdbcType=INTEGER})
+	<!--查询所有用户 -->
+	<select id="selectUsers" resultMap="UserMap">
+		select
+		<include refid="User_Column_List" />
+		from user
 	</select>
-	
-	<!-- 退出登录，更新最后一次时间 -->
+
+	<!-- 根据用户id查询用户角色 -->
+	<resultMap id="RoleMap" type="cn.edu.imut.jm.user.domain.user.entity.Role" >
+    <id column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+    <result column="role_descride" property="roleDescride" jdbcType="VARCHAR" />
+  </resultMap>
+	<sql id="Roles_Column_List">
+		role_id, role_name, role_descride
+	</sql>
+	<select id="selectRoleByUserId" parameterType="int"
+		resultMap="RoleMap">
+		select
+		<include refid="Roles_Column_List" />
+		from role where role_id in (SELECT role_id FROM user_role
+		where
+		user_id=#{userId,jdbcType=INTEGER})
+	</select>
+	<!-- 登录，更新登录最后一次时间 -->
 	<update id="updateUserLastTime">
-	update user
-	<set>
-		<if test="_parameter != null" >
-        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
-      </if>
-	</set>
-	 where user_id = #{userId,jdbcType=INTEGER}
+		update user
+		<set>
+			<if test="_parameter != null">
+				last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where user_id = #{userId,jdbcType=INTEGER}
 	</update>
 </mapper>

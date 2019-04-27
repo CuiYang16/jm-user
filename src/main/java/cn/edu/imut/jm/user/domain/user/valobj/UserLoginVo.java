@@ -5,6 +5,7 @@ public class UserLoginVo {
 	private int code;
 	private String message;
 	private String token;
+	private String avatar;
 
 	public int getCode() {
 		return code;
@@ -35,6 +36,14 @@ public class UserLoginVo {
 		this.code = code;
 		this.message = message;
 		this.token = token;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
 	public UserLoginVo() {

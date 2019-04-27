@@ -10,6 +10,8 @@ public class ResponseVo<E> extends AbstractResponse {
 	private Integer val;
 	private String str;
 	private PageInfo<E> pageInfo;
+	private String avatar;
+	private String userName;
 
 	public List<E> getList() {
 		return list;
@@ -73,6 +75,29 @@ public class ResponseVo<E> extends AbstractResponse {
 	public ResponseVo(PageInfo<E> pageInfo) {
 		super();
 		this.pageInfo = pageInfo;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public ResponseVo(List<E> list, String avatar, String userName) {
+		super();
+		this.list = list;
+		this.avatar = avatar;
+		this.userName = userName;
 	}
 
 	public ResponseVo() {

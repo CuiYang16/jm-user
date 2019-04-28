@@ -14,9 +14,19 @@ public interface UserService {
 
 	PageInfo<User> selectUsers(Integer pageNum, Integer pageSize);
 
-	User userLogin(String userName, String userPwd);
+	User userLogin(String userName);
+
+	Integer validatorUserName(String userName);
 
 	List<Role> selectRoleByUserId(Integer userId);
 
+	List<Role> selectRoles();
+
 	Integer updateUserLastTime(Integer userId, Date lastLoginTime);
+
+	Integer insertUser(User user);
+
+	Integer insertUserRole(Integer userId, List<Integer> roleIds);
+
+	Integer updateUserImg(Integer userId, String userHeadPortrait);
 }

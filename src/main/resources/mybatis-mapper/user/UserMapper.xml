@@ -33,26 +33,34 @@
 	</select>
 
 	<!--登录 -->
-	<select id="userLogin" resultMap="UserMap">
+	<select id="userLogin" resultMap="UserMap" parameterType="string">
 		select
-		<include refid="User_Column_List" />
-		from user where user_name=#{userName,jdbcType=VARCHAR} and
-		user_pwd=#{userPwd,jdbcType=VARCHAR}
+		user_id, user_name,user_pwd
+		from user where user_name=#{userName,jdbcType=VARCHAR}
 	</select>
 
 	<!--查询所有用户 -->
 	<select id="selectUsers" resultMap="UserMap">
 		select
 		<include refid="User_Column_List" />
-		from user
+		from user order by user_id desc
 	</select>
-
+	<!-- 验证用户名 -->
+	<select id="validatorUserName" resultType="int" parameterType="string">
+		select
+		user_id
+		from user where
+		user_name=#{userName,jdbcType=VARCHAR} limit 1
+	</select>
 	<!-- 根据用户id查询用户角色 -->
-	<resultMap id="RoleMap" type="cn.edu.imut.jm.user.domain.user.entity.Role" >
-    <id column="role_id" property="roleId" jdbcType="INTEGER" />
-    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
-    <result column="role_descride" property="roleDescride" jdbcType="VARCHAR" />
-  </resultMap>
+	<resultMap id="RoleMap"
+		type="cn.edu.imut.jm.user.domain.user.entity.Role">
+		<id column="role_id" property="roleId" jdbcType="INTEGER" />
+		<result column="role_name" property="roleName"
+			jdbcType="VARCHAR" />
+		<result column="role_descride" property="roleDescride"
+			jdbcType="VARCHAR" />
+	</resultMap>
 	<sql id="Roles_Column_List">
 		role_id, role_name, role_descride
 	</sql>
@@ -64,6 +72,101 @@
 		where
 		user_id=#{userId,jdbcType=INTEGER})
 	</select>
+	<select id="selectRoles" resultMap="RoleMap">
+		select
+		<include refid="Roles_Column_List" />
+		from role
+	</select>
+	<!--添加用户 -->
+	<insert id="insertUser"
+		parameterType="cn.edu.imut.jm.user.domain.user.entity.User"
+		keyColumn="user_id" keyProperty="userId" useGeneratedKeys="true">
+		insert into user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="userName != null">
+				user_name,
+			</if>
+			<if test="userPwd != null">
+				user_pwd,
+			</if>
+			<if test="userPhone != null">
+				user_phone,
+			</if>
+			<if test="userEmail != null">
+				user_email,
+			</if>
+			<if test="userSex != null">
+				user_sex,
+			</if>
+			<if test="userHeadPortrait != null">
+				user_head_portrait,
+			</if>
+			<if test="lastLoginTime != null">
+				last_login_time,
+			</if>
+			<if test="isDelete != null">
+				is_delete,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userPwd != null">
+				#{userPwd,jdbcType=VARCHAR},
+			</if>
+			<if test="userPhone != null">
+				#{userPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="userEmail != null">
+				#{userEmail,jdbcType=VARCHAR},
+			</if>
+			<if test="userSex != null">
+				#{userSex,jdbcType=BIT},
+			</if>
+			<if test="userHeadPortrait != null">
+				#{userHeadPortrait,jdbcType=VARCHAR},
+			</if>
+			<if test="lastLoginTime != null">
+				#{lastLoginTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isDelete != null">
+				#{isDelete,jdbcType=BIT},
+			</if>
+		</trim>
+	</insert>
+	<!--插入用户角色 -->
+	<insert id="insertUserRole">
+		insert into user_role
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			user_id,
+			role_id,
+		</trim>
+		values
+		<foreach collection="roleIds" item="roleId" index="index"
+			separator=",">
+			(#{userId,jdbcType=INTEGER},#{roleId,jdbcType=INTEGER})
+		</foreach>
+
+	</insert>
+	<!-- 用户头像 -->
+	<update id="updateUserImg">
+		update user
+		<set>
+			<if test="userHeadPortrait != null">
+				user_head_portrait =
+				#{userHeadPortrait,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
 	<!-- 登录，更新登录最后一次时间 -->
 	<update id="updateUserLastTime">
 		update user

@@ -27,7 +27,7 @@ public class SlideShowController implements SlideShowRemoteApi {
 		if (slideImage == null || slideImage.isEmpty()) {
 			return new ResponseVo<>(0, "文件为空");
 		}
-		String fileName = System.currentTimeMillis() + "-journal"
+		String fileName = System.currentTimeMillis() + "-slide"
 				+ slideImage.getOriginalFilename().substring(slideImage.getOriginalFilename().lastIndexOf("."));
 		String filePath = SLIDE_IMG_FILE_PATH + fileName;
 		File file = new File(filePath);

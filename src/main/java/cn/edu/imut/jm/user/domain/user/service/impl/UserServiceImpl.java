@@ -29,9 +29,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User userLogin(String userName, String userPwd) {
-		if (userName != null && userName.length() > 0 && userPwd != null && userPwd.length() > 0) {
-			return userDao.userLogin(userName, userPwd);
+	public User userLogin(String userName) {
+		if (userName != null && userName.length() > 0) {
+			return userDao.userLogin(userName);
 		}
 		return null;
 	}
@@ -61,6 +61,44 @@ public class UserServiceImpl implements UserService {
 		pageInfo.setPageNum(pageNum);
 		pageInfo.setPageSize(pageSize);
 		return pageInfo;
+	}
+
+	@Override
+	public List<Role> selectRoles() {
+
+		return userDao.selectRoles();
+	}
+
+	@Override
+	public Integer insertUser(User user) {
+		if (user != null) {
+			return userDao.insertUser(user);
+		}
+		return null;
+	}
+
+	@Override
+	public Integer updateUserImg(Integer userId, String userHeadPortrait) {
+		if (userId != null && userId != 0 && userHeadPortrait != null && userHeadPortrait.length() > 0) {
+			return userDao.updateUserImg(userId, userHeadPortrait);
+		}
+		return null;
+	}
+
+	@Override
+	public Integer insertUserRole(Integer userId, List<Integer> roleIds) {
+		if (userId != null && userId != 0 && roleIds.size() > 0) {
+			return userDao.insertUserRole(userId, roleIds);
+		}
+		return null;
+	}
+
+	@Override
+	public Integer validatorUserName(String userName) {
+		if (userName != null && userName.length() > 0) {
+			return userDao.validatorUserName(userName);
+		}
+		return null;
 	}
 
 }

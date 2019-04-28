@@ -16,7 +16,7 @@ public class JwtTokenUtil {
 	private static String privateKey = "123456";
 	private static String publicKey = null;
 
-	private static final long EXPIRE_TIME = 15 * 60 * 1000;
+	private static final long EXPIRE_TIME = 24 * 60 * 60 * 1000;
 
 	/**
 	 * 生成token

@@ -12,7 +12,9 @@ public interface UserService {
 
 	User selectUserById(Integer userId);
 
-	PageInfo<User> selectUsers(Integer pageNum, Integer pageSize);
+	List<User> selectUserByIds(List<Integer> userIds);
+
+	PageInfo<User> selectUsers(Integer pageNum, Integer pageSize, boolean isDel);
 
 	User userLogin(String userName);
 
@@ -29,4 +31,18 @@ public interface UserService {
 	Integer insertUserRole(Integer userId, List<Integer> roleIds);
 
 	Integer updateUserImg(Integer userId, String userHeadPortrait);
+
+	Integer resetUserPwd(Integer userId, String userPwd);
+
+	Integer updateUser(User user);
+
+	Integer deleteByUserId(Integer userId);
+
+	Integer updateUserDel(Integer userId);
+
+	Integer deleteUser(Integer userId);
+
+	Integer updateMultipleUserDel(List<Integer> delIds);
+
+	Integer deleteMultipleUser(List<Integer> delIds);
 }

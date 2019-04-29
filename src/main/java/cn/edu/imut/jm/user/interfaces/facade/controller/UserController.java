@@ -32,6 +32,7 @@ public class UserController implements UserServiceRemoteApi {
 	private UserService userService;
 
 	private static final String USER_IMG_FILE_PATH = "E:/img/";
+	private static final String USER_PWD = "abc_123456";
 
 	public UserLoginVo userLogin(@RequestBody String userLogin) {
 		String userName = JSON.parseObject(userLogin).getJSONObject("userLogin").getString("userName");
@@ -78,9 +79,9 @@ public class UserController implements UserServiceRemoteApi {
 
 	@Override
 	public ResponseVo<User> selectUsers(@RequestParam("pageNum") Integer pageNum,
-			@RequestParam("pageSize") Integer pageSize) {
+			@RequestParam("pageSize") Integer pageSize, @RequestParam("isDel") boolean isDel) {
 
-		return new ResponseVo<>(userService.selectUsers(pageNum, pageSize));
+		return new ResponseVo<>(userService.selectUsers(pageNum, pageSize, isDel));
 	}
 
 	@Override
@@ -98,7 +99,6 @@ public class UserController implements UserServiceRemoteApi {
 
 	@Override
 	public ResponseVo insertUser(@RequestBody String json) {
-		System.out.println(json);
 		User user = JSON.toJavaObject(JSON.parseObject(json).getJSONObject("user"), User.class);
 		List<Integer> roleIds = JSON.parseArray(
 				JSON.toJSONString(JSON.parseObject(json).getJSONObject("user").getJSONArray("roles")), Integer.class);
@@ -118,6 +118,20 @@ public class UserController implements UserServiceRemoteApi {
 		if (userImage == null || userImage.isEmpty()) {
 			return new ResponseVo<>(0, "文件为空");
 		}
+
+		User selectUserById = userService.selectUserById(userId);
+		if (selectUserById != null) {
+			if (selectUserById.getUserHeadPortrait() != null && selectUserById.getUserHeadPortrait().length() > 0) {
+				File delFile = new File(USER_IMG_FILE_PATH + selectUserById.getUserHeadPortrait());
+				if (delFile.exists() && delFile.isFile()) {
+					if (!delFile.delete()) {
+						return new ResponseVo<>(0, "图片操作失败");
+					}
+
+				}
+			}
+		}
+
 		String fileName = System.currentTimeMillis() + "-user-avatar"
 				+ userImage.getOriginalFilename().substring(userImage.getOriginalFilename().lastIndexOf("."));
 		String filePath = USER_IMG_FILE_PATH + fileName;
@@ -147,5 +161,82 @@ public class UserController implements UserServiceRemoteApi {
 		}
 		return new ResponseVo<>(0);
 
+	}
+
+	@Override
+	public ResponseVo resetUserPwd(@RequestBody String json) {
+
+		Integer userId = JSON.parseObject(json).getInteger("userId");
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		return new ResponseVo<>(userService.resetUserPwd(userId, passwordEncoder.encode(USER_PWD)));
+	}
+
+	@Override
+	public ResponseVo updateUser(@RequestBody String json) {
+		User user = JSON.toJavaObject(JSON.parseObject(json).getJSONObject("user"), User.class);
+		List<Integer> roleIds = JSON.parseArray(
+				JSON.toJSONString(JSON.parseObject(json).getJSONObject("user").getJSONArray("roles")), Integer.class);
+		if (user.getUserPwd() != null && user.getUserPwd().length() > 7) {
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			user.setUserPwd(passwordEncoder.encode(user.getUserPwd()));
+		}
+
+		Integer updateUser = userService.updateUser(user);
+		if (updateUser == 1) {
+			Integer deleteByUserId = userService.deleteByUserId(user.getUserId());
+			Integer insertUserRole = userService.insertUserRole(user.getUserId(), roleIds);
+			return new ResponseVo<>(1);
+		}
+
+		return new ResponseVo<>(0);
+	}
+
+	@Override
+	public ResponseVo updateUserDel(@RequestBody String json) {
+		Integer userId = JSON.parseObject(json).getInteger("userId");
+		return new ResponseVo<>(userService.updateUserDel(userId));
+	}
+
+	@Override
+	public ResponseVo deleteUser(@RequestBody String json) {
+		Integer userId = JSON.parseObject(json).getInteger("userId");
+		User user = userService.selectUserById(userId);
+//		删除角色信息
+		Integer deleteByUserId = userService.deleteByUserId(userId);
+		if (user != null) {
+			if (user.getUserHeadPortrait() != null && user.getUserHeadPortrait().length() > 0) {
+				File delFile = new File(USER_IMG_FILE_PATH + user.getUserHeadPortrait());
+				if (delFile.exists() && delFile.isFile()) {
+					if (!delFile.delete()) {
+						return new ResponseVo<>(0, "删除头像操作失败");
+					}
+
+				}
+			}
+		}
+		return new ResponseVo<>(userService.deleteUser(userId));
+	}
+
+	@Override
+	public ResponseVo updateMultipleUserDel(@RequestBody String json) {
+		List<Integer> delIds = JSON.parseArray(JSON.toJSONString(JSON.parseObject(json).getJSONArray("delIds")),
+				Integer.class);
+		return new ResponseVo<>(userService.updateMultipleUserDel(delIds));
+	}
+
+	@Override
+	public ResponseVo deleteMultipleUser(@RequestBody String json) {
+		List<Integer> delIds = JSON.parseArray(JSON.toJSONString(JSON.parseObject(json).getJSONArray("delIds")),
+				Integer.class);
+
+		List<User> userByIds = userService.selectUserByIds(delIds);
+		for (User user : userByIds) {
+			userService.deleteByUserId(user.getUserId());
+			File delFile = new File(USER_IMG_FILE_PATH + user.getUserHeadPortrait());
+			if (delFile.exists() && delFile.isFile()) {
+				delFile.delete();
+			}
+		}
+		return new ResponseVo<>(userService.deleteMultipleUser(delIds));
 	}
 }

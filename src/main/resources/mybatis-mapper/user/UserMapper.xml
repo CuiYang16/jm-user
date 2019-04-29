@@ -31,7 +31,17 @@
 		from user
 		where user_id = #{userId,jdbcType=INTEGER}
 	</select>
-
+	<select id="selectUserByIds" resultMap="UserMap"
+		parameterType="java.util.List">
+		select
+		<include refid="User_Column_List" />
+		from user
+		where user_id in
+		<foreach collection="list" item="userId" index="index"
+			open="(" close=")" separator=",">
+			#{userId,jdbcType=INTEGER}
+		</foreach>
+	</select>
 	<!--登录 -->
 	<select id="userLogin" resultMap="UserMap" parameterType="string">
 		select
@@ -40,10 +50,16 @@
 	</select>
 
 	<!--查询所有用户 -->
-	<select id="selectUsers" resultMap="UserMap">
+	<select id="selectUsers" resultMap="UserMap" parameterType="int">
 		select
 		<include refid="User_Column_List" />
-		from user order by user_id desc
+		from user 
+		<where>
+			<if test="_parameter!=0">
+			and is_delete=1
+			</if>
+		</where>
+		 order by user_id desc
 	</select>
 	<!-- 验证用户名 -->
 	<select id="validatorUserName" resultType="int" parameterType="string">
@@ -171,10 +187,88 @@
 	<update id="updateUserLastTime">
 		update user
 		<set>
-			<if test="_parameter != null">
 				last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
-			</if>
 		</set>
 		where user_id = #{userId,jdbcType=INTEGER}
 	</update>
+	<!-- 重置密码 -->
+	<update id="resetUserPwd">
+		update user
+		<set>
+				user_pwd = #{userPwd,jdbcType=VARCHAR},
+		</set>
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+	<!-- 更新用户信息 -->
+	<update id="updateUser" parameterType="cn.edu.imut.jm.user.domain.user.entity.User" >
+    update user
+    <set >
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPwd != null" >
+        user_pwd = #{userPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null" >
+        user_phone = #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="userEmail != null" >
+        user_email = #{userEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="userSex != null" >
+        user_sex = #{userSex,jdbcType=BIT},
+      </if>
+      <if test="userHeadPortrait != null" >
+        user_head_portrait = #{userHeadPortrait,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginTime != null" >
+        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDelete != null" >
+        is_delete = #{isDelete,jdbcType=BIT},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <!--删除角色根据用户id  -->
+  <delete id="deleteByUserId" parameterType="java.lang.Integer" >
+    delete from user_role
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <!--去激活  -->
+  <update id="updateUserDel" parameterType="int">
+		update user
+		<set>
+			is_delete = 1,
+		</set>
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+	<delete id="deleteUser" parameterType="java.lang.Integer">
+		delete from
+		user
+		where user_id = #{userId,jdbcType=INTEGER}
+	</delete>
+	<!--批量去激活-->
+	<update id="updateMultipleUserDel"
+		parameterType="java.util.List">
+		update user
+		<set>
+			is_delete = 1,
+		</set>
+		where user_id in
+		<foreach collection="list" item="userId" index="index"
+			open="(" close=")" separator=",">
+			#{userId,jdbcType=INTEGER}
+		</foreach>
+	</update>
+	<!--批量删除  -->
+	<delete id="deleteMultipleUser"
+		parameterType="java.util.List">
+		delete from user
+		where user_id in
+		<foreach collection="list" item="userId" index="index"
+			open="(" close=")" separator=",">
+			#{userId,jdbcType=INTEGER}
+		</foreach>
+	</delete>
 </mapper>

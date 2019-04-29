@@ -14,7 +14,9 @@ public interface UserDao {
 
 	User selectUserById(Integer userId);
 
-	List<User> selectUsers();
+	List<User> selectUserByIds(List<Integer> userIds);
+
+	List<User> selectUsers(Integer isDel);
 
 	User userLogin(@Param("userName") String userName);
 
@@ -31,4 +33,18 @@ public interface UserDao {
 	Integer insertUserRole(@Param("userId") Integer userId, @Param("roleIds") List<Integer> roleIds);
 
 	Integer updateUserImg(@Param("userId") Integer userId, @Param("userHeadPortrait") String userHeadPortrait);
+
+	Integer resetUserPwd(@Param("userId") Integer userId, @Param("userPwd") String userPwd);
+
+	Integer updateUser(User user);
+
+	Integer deleteByUserId(Integer userId);
+
+	Integer updateUserDel(Integer userId);
+
+	Integer deleteUser(Integer userId);
+
+	Integer updateMultipleUserDel(List<Integer> delIds);
+
+	Integer deleteMultipleUser(List<Integer> delIds);
 }

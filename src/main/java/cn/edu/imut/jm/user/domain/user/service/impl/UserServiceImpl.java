@@ -53,10 +53,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public PageInfo<User> selectUsers(Integer pageNum, Integer pageSize) {
+	public PageInfo<User> selectUsers(Integer pageNum, Integer pageSize, boolean isDel) {
 
 		PageHelper.startPage(pageNum, pageSize);
-		List<User> selectUsers = userDao.selectUsers();
+		List<User> selectUsers = userDao.selectUsers(isDel == true ? 1 : 0);
 		PageInfo<User> pageInfo = new PageInfo<User>(selectUsers);
 		pageInfo.setPageNum(pageNum);
 		pageInfo.setPageSize(pageSize);
@@ -97,6 +97,71 @@ public class UserServiceImpl implements UserService {
 	public Integer validatorUserName(String userName) {
 		if (userName != null && userName.length() > 0) {
 			return userDao.validatorUserName(userName);
+		}
+		return null;
+	}
+
+	@Override
+	public Integer resetUserPwd(Integer userId, String userPwd) {
+		if (userId != null && userId != 0 && userPwd != null && userPwd.length() > 0) {
+			return userDao.resetUserPwd(userId, userPwd);
+		}
+		return null;
+	}
+
+	@Override
+	public Integer updateUser(User user) {
+		if (user != null) {
+			return userDao.updateUser(user);
+		}
+		return null;
+	}
+
+	@Override
+	public Integer deleteByUserId(Integer userId) {
+		if (userId != null && userId != 0) {
+			return userDao.deleteByUserId(userId);
+		}
+		return null;
+	}
+
+	@Override
+	public Integer updateUserDel(Integer userId) {
+		if (userId != null && userId != 0) {
+			return userDao.updateUserDel(userId);
+		}
+		return null;
+	}
+
+	@Override
+	public Integer deleteUser(Integer userId) {
+		if (userId != null && userId != 0) {
+
+			return userDao.deleteUser(userId);
+		}
+		return null;
+	}
+
+	@Override
+	public Integer updateMultipleUserDel(List<Integer> delIds) {
+		if (delIds != null && delIds.size() > 0) {
+			return userDao.updateMultipleUserDel(delIds);
+		}
+		return null;
+	}
+
+	@Override
+	public Integer deleteMultipleUser(List<Integer> delIds) {
+		if (delIds != null && delIds.size() > 0) {
+			return userDao.deleteMultipleUser(delIds);
+		}
+		return null;
+	}
+
+	@Override
+	public List<User> selectUserByIds(List<Integer> userIds) {
+		if (userIds != null && userIds.size() > 0) {
+			return userDao.selectUserByIds(userIds);
 		}
 		return null;
 	}

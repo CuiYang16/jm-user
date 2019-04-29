@@ -15,7 +15,8 @@ import cn.edu.imut.jm.user.domain.user.valobj.UserLoginVo;
 public interface UserServiceRemoteApi {
 
 	@RequestMapping(value = "/get-users", method = { RequestMethod.GET })
-	ResponseVo<User> selectUsers(@RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize);
+	ResponseVo<User> selectUsers(@RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize,
+			@RequestParam("isDel") boolean isDel);
 
 	@RequestMapping(value = "/login", method = { RequestMethod.POST })
 	UserLoginVo userLogin(@RequestBody String userLogin);
@@ -37,4 +38,22 @@ public interface UserServiceRemoteApi {
 
 	@RequestMapping(value = "/upload/user-img", method = { RequestMethod.POST, RequestMethod.GET })
 	ResponseVo insertUserImg(@RequestParam("userId") Integer userId, @RequestParam("file") MultipartFile userImage);
+
+	@RequestMapping(value = "/reset-pwd", method = { RequestMethod.PUT })
+	ResponseVo resetUserPwd(@RequestBody String json);
+
+	@RequestMapping(value = "/update-user", method = { RequestMethod.PUT })
+	ResponseVo updateUser(@RequestBody String json);
+
+	@RequestMapping(value = "/update-del", method = { RequestMethod.PUT })
+	ResponseVo updateUserDel(@RequestBody String json);
+
+	@RequestMapping(value = "/del-user", method = { RequestMethod.DELETE })
+	ResponseVo deleteUser(@RequestBody String json);
+
+	@RequestMapping(value = "/update-muldel", method = { RequestMethod.PUT })
+	ResponseVo updateMultipleUserDel(@RequestBody String json);
+
+	@RequestMapping(value = "/muldel-user", method = { RequestMethod.DELETE })
+	ResponseVo deleteMultipleUser(@RequestBody String json);
 }

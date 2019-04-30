@@ -1,5 +1,7 @@
 package cn.edu.imut.jm.user.interfaces.facade.controller.api;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,4 +22,8 @@ public interface SlideShowRemoteApi {
 
 	@RequestMapping(value = "/del-slide", method = { RequestMethod.DELETE })
 	ResponseVo deleteSlideShow(@RequestBody String json);
+
+//	前端请求
+	@RequestMapping(value = "/get/slides", method = { RequestMethod.GET })
+	List<SlideShow> getSlideShows();
 }

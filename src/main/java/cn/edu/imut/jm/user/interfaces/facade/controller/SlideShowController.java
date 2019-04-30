@@ -1,6 +1,7 @@
 package cn.edu.imut.jm.user.interfaces.facade.controller;
 
 import java.io.File;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +21,7 @@ public class SlideShowController implements SlideShowRemoteApi {
 
 	@Autowired
 	private SlideShowService slideShowService;
-	private static final String SLIDE_IMG_FILE_PATH = "E:/img/";
+	private static final String SLIDE_IMG_FILE_PATH = "F:/MyWorkSpace/bishe-vue/journal-door/static/slide-img/";
 
 	public ResponseVo insertSlideShow(@RequestParam("file") MultipartFile slideImage) {
 
@@ -73,5 +74,12 @@ public class SlideShowController implements SlideShowRemoteApi {
 
 		}
 		return new ResponseVo<>(0);
+	}
+
+//	前端请求
+	@Override
+	public List<SlideShow> getSlideShows() {
+
+		return slideShowService.selectSlideShows();
 	}
 }

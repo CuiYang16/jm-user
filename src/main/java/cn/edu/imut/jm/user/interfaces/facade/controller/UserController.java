@@ -31,7 +31,7 @@ public class UserController implements UserServiceRemoteApi {
 	@Autowired
 	private UserService userService;
 
-	private static final String USER_IMG_FILE_PATH = "E:/img/";
+	private static final String USER_IMG_FILE_PATH = "F:/MyWorkSpace/bishe-vue/journal-door/static/avatar-img/";
 	private static final String USER_PWD = "abc_123456";
 
 	public UserLoginVo userLogin(@RequestBody String userLogin) {

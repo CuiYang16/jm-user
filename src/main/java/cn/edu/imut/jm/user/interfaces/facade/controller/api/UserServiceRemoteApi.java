@@ -69,4 +69,7 @@ public interface UserServiceRemoteApi {
 
 	@RequestMapping(value = "/del-door-user", method = { RequestMethod.DELETE })
 	Integer deleteDoorUser(@RequestBody String json);
+
+	@RequestMapping(value = "/update-pwd", method = { RequestMethod.PUT })
+	Integer updatePwdByUserName(@RequestBody String json);
 }

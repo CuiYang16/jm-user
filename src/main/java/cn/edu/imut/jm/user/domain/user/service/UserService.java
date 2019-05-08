@@ -48,4 +48,6 @@ public interface UserService {
 
 //	前端门户请求
 	User doorUserLogin(String userName);
+
+	Integer updatePwdByUserName(String userName, String userPwd);
 }

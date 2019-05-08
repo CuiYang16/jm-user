@@ -279,4 +279,14 @@
 		user_id, user_name,user_pwd,user_head_portrait
 		from user where user_name=#{userName,jdbcType=VARCHAR} and is_delete=0
 	</select> 
+	
+	<!-- 忘记密码 -->
+	<update id="updatePwdByUserName">
+		update user
+		<set>
+			user_pwd = #{userPwd,jdbcType=VARCHAR},
+		</set>
+		where user_name=#{userName,jdbcType=VARCHAR}
+
+	</update>
 </mapper>

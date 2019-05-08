@@ -174,4 +174,12 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
+	@Override
+	public Integer updatePwdByUserName(String userName, String userPwd) {
+		if (userName != null && userName.length() >= 4 && userPwd != null && userPwd.length() > 0) {
+			return userDao.updatePwdByUserName(userName, userPwd);
+		}
+		return null;
+	}
+
 }

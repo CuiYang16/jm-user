@@ -50,4 +50,6 @@ public interface UserDao {
 
 //	门户前端请求
 	User doorUserLogin(@Param("userName") String userName);
+
+	Integer updatePwdByUserName(@Param("userName") String userName, @Param("userPwd") String userPwd);
 }

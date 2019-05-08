@@ -334,4 +334,12 @@ public class UserController implements UserServiceRemoteApi {
 		}
 		return 0;
 	}
+
+	@Override
+	public Integer updatePwdByUserName(@RequestBody String json) {
+		String userName = JSON.parseObject(json).getString("userName");
+		String userPwd = JSON.parseObject(json).getString("userPwd");
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		return userService.updatePwdByUserName(userName, passwordEncoder.encode(userPwd));
+	}
 }

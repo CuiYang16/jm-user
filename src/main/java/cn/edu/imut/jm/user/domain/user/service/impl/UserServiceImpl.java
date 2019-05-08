@@ -166,4 +166,12 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
+	@Override
+	public User doorUserLogin(String userName) {
+		if (userName != null && userName.length() > 0) {
+			return userDao.doorUserLogin(userName);
+		}
+		return null;
+	}
+
 }

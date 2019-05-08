@@ -56,4 +56,17 @@ public interface UserServiceRemoteApi {
 
 	@RequestMapping(value = "/muldel-user", method = { RequestMethod.DELETE })
 	ResponseVo deleteMultipleUser(@RequestBody String json);
+
+//	门户前端请求
+	@RequestMapping(value = "/door-login", method = { RequestMethod.POST })
+	UserLoginVo doorUserLogin(@RequestBody String userLogin);
+
+	@RequestMapping(value = "/insert-door-user", method = { RequestMethod.POST })
+	Integer insertDoorUser(@RequestBody String json);
+
+	@RequestMapping(value = "/upload/door-user-img", method = { RequestMethod.POST, RequestMethod.GET })
+	ResponseVo insertDoorUserImg(@RequestParam("file") MultipartFile userImage);
+
+	@RequestMapping(value = "/del-door-user", method = { RequestMethod.DELETE })
+	Integer deleteDoorUser(@RequestBody String json);
 }

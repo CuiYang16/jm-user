@@ -47,4 +47,7 @@ public interface UserDao {
 	Integer updateMultipleUserDel(List<Integer> delIds);
 
 	Integer deleteMultipleUser(List<Integer> delIds);
+
+//	门户前端请求
+	User doorUserLogin(@Param("userName") String userName);
 }

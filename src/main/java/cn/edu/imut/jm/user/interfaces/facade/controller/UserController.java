@@ -33,6 +33,7 @@ public class UserController implements UserServiceRemoteApi {
 
 	private static final String USER_IMG_FILE_PATH = "F:/MyWorkSpace/bishe-vue/journal-door/static/avatar-img/";
 	private static final String USER_PWD = "abc_123456";
+	private String avatarImgName = "";
 
 	public UserLoginVo userLogin(@RequestBody String userLogin) {
 		String userName = JSON.parseObject(userLogin).getJSONObject("userLogin").getString("userName");
@@ -238,5 +239,99 @@ public class UserController implements UserServiceRemoteApi {
 			}
 		}
 		return new ResponseVo<>(userService.deleteMultipleUser(delIds));
+	}
+
+	@Override
+	public UserLoginVo doorUserLogin(@RequestBody String userLogin) {
+		String userName = JSON.parseObject(userLogin).getString("userName");
+		String userPwd = JSON.parseObject(userLogin).getString("userPwd");
+		User loginUser = userService.doorUserLogin(userName);
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+		if (loginUser != null) {
+			boolean matches = passwordEncoder.matches(userPwd, loginUser.getUserPwd());
+			if (!matches) {
+				return new UserLoginVo(50000, "密码错误", null);
+			}
+			String token = JwtTokenUtil.generateToken(userName, loginUser.getUserId());
+			if (token != null) {
+				UserLoginVo userLoginVo = LoginResponseUtil.getResponse(token);
+				userLoginVo.setAvatar(loginUser.getUserHeadPortrait());
+				if (userLoginVo.getCode() == 20000) {
+					userService.updateUserLastTime(loginUser.getUserId(), new Date());
+				}
+				return userLoginVo;
+			}
+		}
+		return new UserLoginVo(50001, "登录失败", null);
+	}
+
+	@Override
+	public Integer insertDoorUser(@RequestBody String json) {
+		User user = JSON.toJavaObject(JSON.parseObject(json).getJSONObject("user"), User.class);
+		List<Integer> roleIds = new ArrayList<>();
+		roleIds.add(3);
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		user.setUserPwd(passwordEncoder.encode(user.getUserPwd()));
+		user.setUserHeadPortrait(avatarImgName);
+		Integer insertUser = userService.insertUser(user);
+
+		if (insertUser == 1) {
+
+			Integer insertUserRole = userService.insertUserRole(user.getUserId(), roleIds);
+			avatarImgName = "";
+			return user.getUserId();
+		}
+		return 0;
+	}
+
+	@Override
+	public ResponseVo insertDoorUserImg(@RequestParam("file") MultipartFile userImage) {
+		if (userImage == null || userImage.isEmpty()) {
+			return new ResponseVo<>(0);
+		}
+		File delFile = new File(USER_IMG_FILE_PATH + avatarImgName);
+		if (delFile.exists() && delFile.isFile()) {
+			if (!delFile.delete()) {
+				return new ResponseVo<>(0);
+			}
+
+		}
+		String fileName = System.currentTimeMillis() + "-user-avatar"
+				+ userImage.getOriginalFilename().substring(userImage.getOriginalFilename().lastIndexOf("."));
+		String filePath = USER_IMG_FILE_PATH + fileName;
+
+		File file = new File(filePath);
+		if (!file.getParentFile().exists()) { // 判断文件父目录是否存在
+			file.getParentFile().mkdir();
+		}
+		if (userImage.getOriginalFilename().endsWith(".jpg") || userImage.getOriginalFilename().endsWith(".jpeg")
+				|| userImage.getOriginalFilename().endsWith(".png")) {
+			try {
+				userImage.transferTo(file);
+				avatarImgName = fileName;
+				return new ResponseVo<>(1, fileName);
+			} catch (IllegalStateException | IOException e) {
+				e.printStackTrace();
+				return new ResponseVo<>(0);
+			}
+		} else {
+			return new ResponseVo<>(0);
+		}
+	}
+
+	@Override
+	public Integer deleteDoorUser(@RequestBody String json) {
+		String fileName = JSON.parseObject(json).getString("fileName");
+		File delFile = new File(USER_IMG_FILE_PATH + fileName);
+		if (delFile.exists() && delFile.isFile()) {
+			if (!delFile.delete()) {
+				return 0;
+			} else {
+				return 1;
+			}
+
+		}
+		return 0;
 	}
 }

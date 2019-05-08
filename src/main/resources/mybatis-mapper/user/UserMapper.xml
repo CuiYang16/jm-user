@@ -45,7 +45,7 @@
 	<!--登录 -->
 	<select id="userLogin" resultMap="UserMap" parameterType="string">
 		select
-		user_id, user_name,user_pwd
+		user_id, user_name,user_pwd,user_head_portrait
 		from user where user_name=#{userName,jdbcType=VARCHAR}
 	</select>
 
@@ -271,4 +271,12 @@
 			#{userId,jdbcType=INTEGER}
 		</foreach>
 	</delete>
+	
+	<!-- 前端门户请求 -->
+	<!--登录 -->
+	<select id="doorUserLogin" resultMap="UserMap" parameterType="string">
+		select
+		user_id, user_name,user_pwd,user_head_portrait
+		from user where user_name=#{userName,jdbcType=VARCHAR} and is_delete=0
+	</select> 
 </mapper>

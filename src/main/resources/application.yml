@@ -12,3 +12,7 @@ spring:
   application:
     #当前应用名称
     name: jm-user
+
+logging:
+  level:
+     cn.edu.imut.jm.user.domain.user.dao.UserDao: debug

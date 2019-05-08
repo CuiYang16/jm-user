@@ -45,4 +45,7 @@ public interface UserService {
 	Integer updateMultipleUserDel(List<Integer> delIds);
 
 	Integer deleteMultipleUser(List<Integer> delIds);
+
+//	前端门户请求
+	User doorUserLogin(String userName);
 }

@@ -35,6 +35,7 @@ public class UserController implements UserServiceRemoteApi {
 	private static final String USER_IMG_FILE_PATH = "F:/MyWorkSpace/bishe-vue/journal-door/static/avatar-img/";
 	private static final String USER_PWD = "abc_123456";
 	private String avatarImgName = "";
+	private String avatarUserImgName = "";
 
 	public UserLoginVo userLogin(@RequestBody String userLogin) {
 		String userName = JSON.parseObject(userLogin).getJSONObject("userLogin").getString("userName");
@@ -342,5 +343,43 @@ public class UserController implements UserServiceRemoteApi {
 		String userPwd = JSON.parseObject(json).getString("userPwd");
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		return userService.updatePwdByUserName(userName, passwordEncoder.encode(userPwd));
+	}
+
+	@Override
+	public Integer updateDoorUser(@RequestBody String json) {
+		User user = JSON.toJavaObject(JSON.parseObject(json).getJSONObject("user"), User.class);
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		user.setUserPwd(passwordEncoder.encode(user.getUserPwd()));
+		if (avatarImgName != null && avatarImgName.length() > 0) {
+			user.setUserHeadPortrait(avatarImgName);
+		}
+
+		Integer updateUser = userService.updateUser(user);
+
+		if (updateUser == 1) {
+			avatarImgName = "";
+			return 1;
+		}
+		return 0;
+	}
+
+	@Override
+	public User selectUserById(@RequestParam("token") String token) {
+		Integer userId = JwtTokenUtil.getUserId(token);
+		return userService.selectUserById(userId);
+	}
+
+	@Override
+	public String updateDoorUserImg(@RequestParam("file") MultipartFile userImage) {
+		String fileName = System.currentTimeMillis() + "-user-avatar"
+				+ userImage.getOriginalFilename().substring(userImage.getOriginalFilename().lastIndexOf("."));
+		this.avatarUserImgName = fileName;
+		return fileName;
+	}
+
+	@Override
+	public Integer deleteDoorUserImg(@RequestBody String json) {
+		avatarImgName = "";
+		return 1;
 	}
 }

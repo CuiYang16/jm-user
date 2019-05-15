@@ -72,4 +72,16 @@ public interface UserServiceRemoteApi {
 
 	@RequestMapping(value = "/update-pwd", method = { RequestMethod.PUT })
 	Integer updatePwdByUserName(@RequestBody String json);
+
+	@RequestMapping(value = "/update-door-user", method = { RequestMethod.PUT })
+	Integer updateDoorUser(@RequestBody String json);
+
+	@RequestMapping(value = "/get-user-info", method = { RequestMethod.GET })
+	User selectUserById(@RequestParam("token") String token);
+
+	@RequestMapping(value = "/update/door-user-img", method = { RequestMethod.POST, RequestMethod.GET })
+	String updateDoorUserImg(@RequestParam("file") MultipartFile userImage);
+
+	@RequestMapping(value = "/del-door-user-img", method = { RequestMethod.DELETE })
+	Integer deleteDoorUserImg(@RequestBody String json);
 }

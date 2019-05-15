@@ -21,6 +21,8 @@ public class SlideShowController implements SlideShowRemoteApi {
 
 	@Autowired
 	private SlideShowService slideShowService;
+	// private static final String SLIDE_IMG_FILE_PATH =
+	// "C:/Users/Administrator/Desktop/journal-door/static/slide-img/";
 	private static final String SLIDE_IMG_FILE_PATH = "F:/MyWorkSpace/bishe-vue/journal-door/static/slide-img/";
 
 	public ResponseVo insertSlideShow(@RequestParam("file") MultipartFile slideImage) {

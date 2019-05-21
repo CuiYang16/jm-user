@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -201,23 +202,31 @@ public class UserController implements UserServiceRemoteApi {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public ResponseVo deleteUser(@RequestBody String json) {
 		Integer userId = JSON.parseObject(json).getInteger("userId");
 		User user = userService.selectUserById(userId);
-//		删除角色信息
-		Integer deleteByUserId = userService.deleteByUserId(userId);
-		if (user != null) {
-			if (user.getUserHeadPortrait() != null && user.getUserHeadPortrait().length() > 0) {
-				File delFile = new File(USER_IMG_FILE_PATH + user.getUserHeadPortrait());
-				if (delFile.exists() && delFile.isFile()) {
-					if (!delFile.delete()) {
-						return new ResponseVo<>(0, "删除头像操作失败");
-					}
 
+		try {
+			Integer deleteUser = userService.deleteUser(userId);
+			// 删除角色信息
+			Integer deleteByUserId = userService.deleteByUserId(userId);
+			if (user != null) {
+				if (user.getUserHeadPortrait() != null && user.getUserHeadPortrait().length() > 0) {
+					File delFile = new File(USER_IMG_FILE_PATH + user.getUserHeadPortrait());
+					if (delFile.exists() && delFile.isFile()) {
+						if (!delFile.delete()) {
+							return new ResponseVo<>(0, "删除头像操作失败");
+						}
+
+					}
 				}
 			}
+			return new ResponseVo<>(deleteUser);
+		} catch (Exception e) {
+			return new ResponseVo<>(-1);
 		}
-		return new ResponseVo<>(userService.deleteUser(userId));
+
 	}
 
 	@Override
@@ -228,19 +237,27 @@ public class UserController implements UserServiceRemoteApi {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public ResponseVo deleteMultipleUser(@RequestBody String json) {
 		List<Integer> delIds = JSON.parseArray(JSON.toJSONString(JSON.parseObject(json).getJSONArray("delIds")),
 				Integer.class);
 
 		List<User> userByIds = userService.selectUserByIds(delIds);
-		for (User user : userByIds) {
-			userService.deleteByUserId(user.getUserId());
-			File delFile = new File(USER_IMG_FILE_PATH + user.getUserHeadPortrait());
-			if (delFile.exists() && delFile.isFile()) {
-				delFile.delete();
+		try {
+			Integer deleteMultipleUser = userService.deleteMultipleUser(delIds);
+
+			for (User user : userByIds) {
+				userService.deleteByUserId(user.getUserId());
+				File delFile = new File(USER_IMG_FILE_PATH + user.getUserHeadPortrait());
+				if (delFile.exists() && delFile.isFile()) {
+					delFile.delete();
+				}
 			}
+			return new ResponseVo<>(deleteMultipleUser);
+		} catch (Exception e) {
+			return new ResponseVo<>(-1);
 		}
-		return new ResponseVo<>(userService.deleteMultipleUser(delIds));
+
 	}
 
 	@Override

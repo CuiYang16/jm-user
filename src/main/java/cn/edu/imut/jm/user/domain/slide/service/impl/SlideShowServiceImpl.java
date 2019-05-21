@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.edu.imut.jm.user.domain.slide.dao.SlideShowDao;
 import cn.edu.imut.jm.user.domain.slide.entity.SlideShow;
@@ -16,6 +17,7 @@ public class SlideShowServiceImpl implements SlideShowService {
 	private SlideShowDao slideShowDao;
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer insertSlideShow(SlideShow slideShow) {
 		if (slideShow != null && slideShow.getName() != null) {
 			return slideShowDao.insertSlideShow(slideShow);
@@ -29,6 +31,7 @@ public class SlideShowServiceImpl implements SlideShowService {
 		return slideShowDao.selectSlideShows();
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	public Integer deleteSlideShow(String name) {
 		if (name != null && name.length() > 0) {
 			return slideShowDao.deleteSlideShow(name);

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer updateUserLastTime(Integer userId, Date lastLoginTime) {
 		if (userId != null && userId != 0 && lastLoginTime != null) {
 			return userDao.updateUserLastTime(userId, lastLoginTime);
@@ -70,6 +72,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer insertUser(User user) {
 		if (user != null) {
 			return userDao.insertUser(user);
@@ -78,6 +81,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer updateUserImg(Integer userId, String userHeadPortrait) {
 		if (userId != null && userId != 0 && userHeadPortrait != null && userHeadPortrait.length() > 0) {
 			return userDao.updateUserImg(userId, userHeadPortrait);
@@ -86,6 +90,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer insertUserRole(Integer userId, List<Integer> roleIds) {
 		if (userId != null && userId != 0 && roleIds.size() > 0) {
 			return userDao.insertUserRole(userId, roleIds);
@@ -102,6 +107,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer resetUserPwd(Integer userId, String userPwd) {
 		if (userId != null && userId != 0 && userPwd != null && userPwd.length() > 0) {
 			return userDao.resetUserPwd(userId, userPwd);
@@ -110,6 +116,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer updateUser(User user) {
 		if (user != null) {
 			return userDao.updateUser(user);
@@ -118,6 +125,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer deleteByUserId(Integer userId) {
 		if (userId != null && userId != 0) {
 			return userDao.deleteByUserId(userId);
@@ -126,6 +134,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer updateUserDel(Integer userId) {
 		if (userId != null && userId != 0) {
 			return userDao.updateUserDel(userId);
@@ -135,14 +144,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Integer deleteUser(Integer userId) {
+		Integer deleteUser = null;
 		if (userId != null && userId != 0) {
-
-			return userDao.deleteUser(userId);
+			deleteUser = userDao.deleteUser(userId);
 		}
-		return null;
+		return deleteUser;
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer updateMultipleUserDel(List<Integer> delIds) {
 		if (delIds != null && delIds.size() > 0) {
 			return userDao.updateMultipleUserDel(delIds);
@@ -152,10 +162,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Integer deleteMultipleUser(List<Integer> delIds) {
+		Integer deleteMultipleUser = null;
 		if (delIds != null && delIds.size() > 0) {
-			return userDao.deleteMultipleUser(delIds);
+			deleteMultipleUser = userDao.deleteMultipleUser(delIds);
 		}
-		return null;
+		return deleteMultipleUser;
+
 	}
 
 	@Override
@@ -175,6 +187,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer updatePwdByUserName(String userName, String userPwd) {
 		if (userName != null && userName.length() >= 4 && userPwd != null && userPwd.length() > 0) {
 			return userDao.updatePwdByUserName(userName, userPwd);

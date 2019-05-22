@@ -261,6 +261,12 @@ public class UserController implements UserServiceRemoteApi {
 	}
 
 	@Override
+	public ResponseVo userChart() {
+
+		return new ResponseVo<>(userService.userChart());
+	}
+
+	@Override
 	public UserLoginVo doorUserLogin(@RequestBody String userLogin) {
 		String userName = JSON.parseObject(userLogin).getString("userName");
 		String userPwd = JSON.parseObject(userLogin).getString("userPwd");
@@ -399,4 +405,5 @@ public class UserController implements UserServiceRemoteApi {
 		avatarImgName = "";
 		return 1;
 	}
+
 }

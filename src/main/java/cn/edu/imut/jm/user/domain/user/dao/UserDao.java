@@ -52,4 +52,8 @@ public interface UserDao {
 	User doorUserLogin(@Param("userName") String userName);
 
 	Integer updatePwdByUserName(@Param("userName") String userName, @Param("userPwd") String userPwd);
+
+	Integer userCount();
+
+	Integer activateUserCount();
 }

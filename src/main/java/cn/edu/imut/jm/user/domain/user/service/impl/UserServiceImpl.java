@@ -195,4 +195,12 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
+	@Override
+	public String userChart() {
+		Integer userCount = userDao.userCount();
+		Integer activateUserCount = userDao.activateUserCount();
+
+		return userCount + "," + activateUserCount;
+	}
+
 }

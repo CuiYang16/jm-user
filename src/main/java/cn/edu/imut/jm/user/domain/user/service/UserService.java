@@ -50,4 +50,7 @@ public interface UserService {
 	User doorUserLogin(String userName);
 
 	Integer updatePwdByUserName(String userName, String userPwd);
+
+	String userChart();
+
 }

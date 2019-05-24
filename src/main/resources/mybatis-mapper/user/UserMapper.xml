@@ -46,8 +46,8 @@
 	<select id="userLogin" resultMap="UserMap"
 		parameterType="string">
 		select
-		user_id, user_name,user_pwd,user_head_portrait
-		from user where user_name=#{userName,jdbcType=VARCHAR}
+		user_id, user_name,user_pwd,user_head_portrait 
+		from user where user_name=#{userName,jdbcType=VARCHAR} and is_delete=0
 	</select>
 
 	<!--查询所有用户 -->

@@ -10,12 +10,15 @@
   <sql id="SlideShow_Column_List" >
     slide_id, name, url, show_flag
   </sql>
+  
+  <!-- 查询轮播图片 -->
   <select id="selectSlideShows" resultMap="SlideShowMap">
     select 
     <include refid="SlideShow_Column_List" />
     from slide_show order by slide_id desc limit 8;
   </select>
   
+  <!-- 插入轮播图片 -->
   <insert id="insertSlideShow" parameterType="cn.edu.imut.jm.user.domain.slide.entity.SlideShow" >
     insert into slide_show
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -48,6 +51,7 @@
     </trim>
   </insert>
   
+  <!-- 删除轮播图片 -->
   <delete id="deleteSlideShow" parameterType="string" >
     delete from slide_show
     where name = #{name,jdbcType=VARCHAR}

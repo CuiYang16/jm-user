@@ -25,8 +25,13 @@ import cn.edu.imut.jm.user.domain.user.service.UserService;
 import cn.edu.imut.jm.user.domain.user.valobj.UserLoginVo;
 import cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi;
 
+/**
+ * 
+ * @ClassName: UserController.java
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author Cy
+ */
 @RestController
-
 public class UserController implements UserServiceRemoteApi {
 
 	@Autowired
@@ -38,6 +43,12 @@ public class UserController implements UserServiceRemoteApi {
 	private String avatarImgName = "";
 	private String avatarUserImgName = "";
 
+	/**
+	 * @Title: userLogin
+	 * @Description: 后台用户登录
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#userLogin(java.lang.String)
+	 */
 	public UserLoginVo userLogin(@RequestBody String userLogin) {
 		String userName = JSON.parseObject(userLogin).getJSONObject("userLogin").getString("userName");
 		String userPwd = JSON.parseObject(userLogin).getJSONObject("userLogin").getString("userPwd");
@@ -63,8 +74,13 @@ public class UserController implements UserServiceRemoteApi {
 		return new UserLoginVo(50001, "登录失败", null);
 	}
 
+	/**
+	 * @Title: selectRoleByUserId
+	 * @Description: 根据用户token查询用户角色信息，返回角色数组
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#selectRoleByUserId(java.lang.String)
+	 */
 	@Override
-
 	public ResponseVo<String> selectRoleByUserId(@RequestParam("token") String token) {
 		if (!JwtTokenUtil.parseToken(token)) {
 			return new ResponseVo<>(0);
@@ -81,6 +97,13 @@ public class UserController implements UserServiceRemoteApi {
 		return new ResponseVo<String>(roles, user.getUserHeadPortrait(), user.getUserName());
 	}
 
+	/**
+	 * @Title: selectUsers
+	 * @Description: 条件分页查询用户信息
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#selectUsers(java.lang.Integer,
+	 *           java.lang.Integer, boolean)
+	 */
 	@Override
 	public ResponseVo<User> selectUsers(@RequestParam("pageNum") Integer pageNum,
 			@RequestParam("pageSize") Integer pageSize, @RequestParam("isDel") boolean isDel) {
@@ -88,6 +111,13 @@ public class UserController implements UserServiceRemoteApi {
 		return new ResponseVo<>(userService.selectUsers(pageNum, pageSize, isDel));
 	}
 
+	/**
+	 * 
+	 * @Title: selectRole
+	 * @Description: 根据用户id查询查询角色信息
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#selectRole(java.lang.Integer)
+	 */
 	@Override
 	public ResponseVo<Role> selectRole(@RequestParam("userId") Integer userId) {
 
@@ -95,12 +125,24 @@ public class UserController implements UserServiceRemoteApi {
 		return new ResponseVo<>(selectRoleByUserId);
 	}
 
+	/**
+	 * @Title: selectRoles
+	 * @Description: 查询所有角色信息
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#selectRoles()
+	 */
 	@Override
 	public ResponseVo<Role> selectRoles() {
 
 		return new ResponseVo<>(userService.selectRoles());
 	}
 
+	/**
+	 * @Title: insertUser
+	 * @Description: 新增用户
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#insertUser(java.lang.String)
+	 */
 	@Override
 	public ResponseVo insertUser(@RequestBody String json) {
 		User user = JSON.toJavaObject(JSON.parseObject(json).getJSONObject("user"), User.class);
@@ -116,6 +158,13 @@ public class UserController implements UserServiceRemoteApi {
 		return new ResponseVo<>(0);
 	}
 
+	/**
+	 * @Title: insertUserImg
+	 * @Description: 上传用户头像
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#insertUserImg(java.lang.Integer,
+	 *           org.springframework.web.multipart.MultipartFile)
+	 */
 	@Override
 	public ResponseVo insertUserImg(@RequestParam("userId") Integer userId,
 			@RequestParam("file") MultipartFile userImage) {
@@ -157,6 +206,12 @@ public class UserController implements UserServiceRemoteApi {
 		}
 	}
 
+	/**
+	 * @Title: validatorUserName
+	 * @Description: 验证用户名是否重复
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#validatorUserName(java.lang.String)
+	 */
 	@Override
 	public ResponseVo validatorUserName(@RequestParam("userName") String userName) {
 		Integer validatorUserName = userService.validatorUserName(userName);
@@ -167,6 +222,12 @@ public class UserController implements UserServiceRemoteApi {
 
 	}
 
+	/**
+	 * @Title: resetUserPwd
+	 * @Description: 重置密码
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#resetUserPwd(java.lang.String)
+	 */
 	@Override
 	public ResponseVo resetUserPwd(@RequestBody String json) {
 
@@ -175,6 +236,12 @@ public class UserController implements UserServiceRemoteApi {
 		return new ResponseVo<>(userService.resetUserPwd(userId, passwordEncoder.encode(USER_PWD)));
 	}
 
+	/**
+	 * @Title: updateUser
+	 * @Description: 编辑用户信息
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#updateUser(java.lang.String)
+	 */
 	@Override
 	public ResponseVo updateUser(@RequestBody String json) {
 		User user = JSON.toJavaObject(JSON.parseObject(json).getJSONObject("user"), User.class);
@@ -195,12 +262,24 @@ public class UserController implements UserServiceRemoteApi {
 		return new ResponseVo<>(0);
 	}
 
+	/**
+	 * @Title: updateUserDel
+	 * @Description: 去激活用户
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#updateUserDel(java.lang.String)
+	 */
 	@Override
 	public ResponseVo updateUserDel(@RequestBody String json) {
 		Integer userId = JSON.parseObject(json).getInteger("userId");
 		return new ResponseVo<>(userService.updateUserDel(userId));
 	}
 
+	/**
+	 * @Title: deleteUser
+	 * @Description: 彻底删除用户信息
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#deleteUser(java.lang.String)
+	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseVo deleteUser(@RequestBody String json) {
@@ -229,6 +308,13 @@ public class UserController implements UserServiceRemoteApi {
 
 	}
 
+	/**
+	 * 
+	 * @Title: updateMultipleUserDel
+	 * @Description: 批量去激活用户
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#updateMultipleUserDel(java.lang.String)
+	 */
 	@Override
 	public ResponseVo updateMultipleUserDel(@RequestBody String json) {
 		List<Integer> delIds = JSON.parseArray(JSON.toJSONString(JSON.parseObject(json).getJSONArray("delIds")),
@@ -236,6 +322,13 @@ public class UserController implements UserServiceRemoteApi {
 		return new ResponseVo<>(userService.updateMultipleUserDel(delIds));
 	}
 
+	/**
+	 * 
+	 * @Title: deleteMultipleUser
+	 * @Description: 批量删除用户
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#deleteMultipleUser(java.lang.String)
+	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseVo deleteMultipleUser(@RequestBody String json) {
@@ -260,12 +353,26 @@ public class UserController implements UserServiceRemoteApi {
 
 	}
 
+	/**
+	 * 
+	 * @Title: userChart
+	 * @Description: 用户统计信息，用户总数和激活用户数
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#userChart()
+	 */
 	@Override
 	public ResponseVo userChart() {
 
 		return new ResponseVo<>(userService.userChart());
 	}
 
+	/**
+	 * 
+	 * @Title: doorUserLogin
+	 * @Description: 门户网站登录
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#doorUserLogin(java.lang.String)
+	 */
 	@Override
 	public UserLoginVo doorUserLogin(@RequestBody String userLogin) {
 		String userName = JSON.parseObject(userLogin).getString("userName");
@@ -291,6 +398,13 @@ public class UserController implements UserServiceRemoteApi {
 		return new UserLoginVo(50001, "登录失败", null);
 	}
 
+	/**
+	 * 
+	 * @Title: insertDoorUser
+	 * @Description: 门户网站注册
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#insertDoorUser(java.lang.String)
+	 */
 	@Override
 	public Integer insertDoorUser(@RequestBody String json) {
 		User user = JSON.toJavaObject(JSON.parseObject(json).getJSONObject("user"), User.class);
@@ -310,6 +424,13 @@ public class UserController implements UserServiceRemoteApi {
 		return 0;
 	}
 
+	/**
+	 * 
+	 * @Title: insertDoorUserImg
+	 * @Description: 门户网站头像上传
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#insertDoorUserImg(org.springframework.web.multipart.MultipartFile)
+	 */
 	@Override
 	public ResponseVo insertDoorUserImg(@RequestParam("file") MultipartFile userImage) {
 		if (userImage == null || userImage.isEmpty()) {
@@ -345,6 +466,13 @@ public class UserController implements UserServiceRemoteApi {
 		}
 	}
 
+	/**
+	 * 
+	 * @Title: deleteDoorUser
+	 * @Description: 删除本地头像文件
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#deleteDoorUser(java.lang.String)
+	 */
 	@Override
 	public Integer deleteDoorUser(@RequestBody String json) {
 		String fileName = JSON.parseObject(json).getString("fileName");
@@ -360,6 +488,13 @@ public class UserController implements UserServiceRemoteApi {
 		return 0;
 	}
 
+	/**
+	 * 
+	 * @Title: updatePwdByUserName
+	 * @Description: 根据用户名修改密码
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#updatePwdByUserName(java.lang.String)
+	 */
 	@Override
 	public Integer updatePwdByUserName(@RequestBody String json) {
 		String userName = JSON.parseObject(json).getString("userName");
@@ -368,6 +503,13 @@ public class UserController implements UserServiceRemoteApi {
 		return userService.updatePwdByUserName(userName, passwordEncoder.encode(userPwd));
 	}
 
+	/**
+	 * 
+	 * @Title: updateDoorUser
+	 * @Description: 更新个人信息
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#updateDoorUser(java.lang.String)
+	 */
 	@Override
 	public Integer updateDoorUser(@RequestBody String json) {
 		User user = JSON.toJavaObject(JSON.parseObject(json).getJSONObject("user"), User.class);
@@ -386,12 +528,26 @@ public class UserController implements UserServiceRemoteApi {
 		return 0;
 	}
 
+	/**
+	 * 
+	 * @Title: selectUserById
+	 * @Description: 查询个人信息
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#selectUserById(java.lang.String)
+	 */
 	@Override
 	public User selectUserById(@RequestParam("token") String token) {
 		Integer userId = JwtTokenUtil.getUserId(token);
 		return userService.selectUserById(userId);
 	}
 
+	/**
+	 * 
+	 * @Title: updateDoorUserImg
+	 * @Description: 更新头像
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.UserServiceRemoteApi#updateDoorUserImg(org.springframework.web.multipart.MultipartFile)
+	 */
 	@Override
 	public String updateDoorUserImg(@RequestParam("file") MultipartFile userImage) {
 		String fileName = System.currentTimeMillis() + "-user-avatar"

@@ -25,6 +25,13 @@ public class SlideShowController implements SlideShowRemoteApi {
 	// "C:/Users/Administrator/Desktop/journal-door/static/slide-img/";
 	private static final String SLIDE_IMG_FILE_PATH = "F:/MyWorkSpace/bishe-vue/journal-door/static/slide-img/";
 
+	/**
+	 * 
+	 * @Title: insertSlideShow
+	 * @Description: 新增轮播图图片
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.SlideShowRemoteApi#insertSlideShow(org.springframework.web.multipart.MultipartFile)
+	 */
 	public ResponseVo insertSlideShow(@RequestParam("file") MultipartFile slideImage) {
 
 		if (slideImage == null || slideImage.isEmpty()) {
@@ -58,12 +65,26 @@ public class SlideShowController implements SlideShowRemoteApi {
 		}
 	}
 
+	/**
+	 * 
+	 * @Title: selectSlideShows
+	 * @Description: 查询所有轮播图片
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.SlideShowRemoteApi#selectSlideShows()
+	 */
 	@Override
 	public ResponseVo<SlideShow> selectSlideShows() {
 
 		return new ResponseVo<>(slideShowService.selectSlideShows());
 	}
 
+	/**
+	 * 
+	 * @Title: deleteSlideShow
+	 * @Description: 删除轮播图片
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.SlideShowRemoteApi#deleteSlideShow(java.lang.String)
+	 */
 	@Override
 	public ResponseVo deleteSlideShow(@RequestBody String json) {
 		String name = JSON.parseObject(json).getString("name");
@@ -79,6 +100,13 @@ public class SlideShowController implements SlideShowRemoteApi {
 	}
 
 //	前端请求
+	/**
+	 * 
+	 * @Title: getSlideShows
+	 * @Description: 查询显示轮播图片
+	 * @override @see
+	 *           cn.edu.imut.jm.user.interfaces.facade.controller.api.SlideShowRemoteApi#getSlideShows()
+	 */
 	@Override
 	public List<SlideShow> getSlideShows() {
 

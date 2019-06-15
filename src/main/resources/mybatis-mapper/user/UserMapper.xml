@@ -62,6 +62,7 @@
 		</where>
 		order by user_id desc
 	</select>
+	
 	<!-- 验证用户名 -->
 	<select id="validatorUserName" resultType="int"
 		parameterType="string">
@@ -70,6 +71,7 @@
 		from user where
 		user_name=#{userName,jdbcType=VARCHAR} limit 1
 	</select>
+	
 	<!-- 根据用户id查询用户角色 -->
 	<resultMap id="RoleMap"
 		type="cn.edu.imut.jm.user.domain.user.entity.Role">
@@ -82,6 +84,7 @@
 	<sql id="Roles_Column_List">
 		role_id, role_name, role_descride
 	</sql>
+	<!-- 根据用户id查询用户角色 -->
 	<select id="selectRoleByUserId" parameterType="int"
 		resultMap="RoleMap">
 		select
@@ -90,11 +93,13 @@
 		where
 		user_id=#{userId,jdbcType=INTEGER})
 	</select>
+	<!-- 查询所有角色 -->
 	<select id="selectRoles" resultMap="RoleMap">
 		select
 		<include refid="Roles_Column_List" />
 		from role
 	</select>
+	
 	<!--添加用户 -->
 	<insert id="insertUser"
 		parameterType="cn.edu.imut.jm.user.domain.user.entity.User"
@@ -246,12 +251,15 @@
 		</set>
 		where user_id = #{userId,jdbcType=INTEGER}
 	</update>
+	
+	<!-- 删除用户 -->
 	<delete id="deleteUser" parameterType="java.lang.Integer">
 		delete from
 		user
 		where
 		user_id = #{userId,jdbcType=INTEGER}
 	</delete>
+	
 	<!--批量去激活 -->
 	<update id="updateMultipleUserDel"
 		parameterType="java.util.List">
@@ -265,6 +273,7 @@
 			#{userId,jdbcType=INTEGER}
 		</foreach>
 	</update>
+	
 	<!--批量删除 -->
 	<delete id="deleteMultipleUser" parameterType="java.util.List">
 		delete from user
@@ -274,6 +283,7 @@
 			#{userId,jdbcType=INTEGER}
 		</foreach>
 	</delete>
+	
 	<!-- 所有用户数 -->
 	<select id="userCount" resultType="int">
 		select count(*) from user
@@ -282,6 +292,7 @@
 	<select id="activateUserCount" resultType="int">
 		select count(*) from user where is_delete=0
 	</select>
+	
 	<!-- 前端门户请求 -->
 	<!--登录 -->
 	<select id="doorUserLogin" resultMap="UserMap"
